@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: #e8e8e8; }
+body { font-family: 'Georgia', serif; background: #fff; width: 1440px; margin: 0 auto; color: #1a1a1a; box-shadow: 0 0 40px rgba(0,0,0,0.12); }
+
+:root {
+  --black: #1a1a1a;
+  --white: #ffffff;
+  --cream: #fdf8f4;
+  --gray-light: #f2ede8;
+  --gray-mid: #d4ccc6;
+  --gray-dark: #888;
+  --accent: #c9a882;
+}
+
+/* ── TYPOGRAPHY ── */
+h1 { font-size: 52px; font-weight: 400; line-height: 1.15; letter-spacing: -1px; font-style: italic; }
+h2 { font-size: 38px; font-weight: 400; line-height: 1.2; letter-spacing: -0.5px; }
+h3 { font-size: 22px; font-weight: 600; font-family: Arial, sans-serif; letter-spacing: 0.02em; }
+h4 { font-size: 16px; font-weight: 700; font-family: Arial, sans-serif; text-transform: uppercase; letter-spacing: 0.1em; }
+p { font-size: 15px; line-height: 1.7; color: #555; font-family: Arial, sans-serif; }
+.eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--gray-dark); font-family: Arial, sans-serif; }
+.section { border-bottom: 1px solid var(--gray-mid); }
+
+/* ── BUTTONS ── */
+.btn-dark {
+  display: inline-block; background: var(--black); color: #fff;
+  padding: 14px 32px; border-radius: 3px; font-size: 13px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; font-family: Arial, sans-serif;
+}
+.btn-outline {
+  display: inline-block; border: 1.5px solid var(--black); color: var(--black);
+  padding: 13px 32px; border-radius: 3px; font-size: 13px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; font-family: Arial, sans-serif;
+}
+.btn-light {
+  display: inline-block; background: #fff; color: var(--black);
+  padding: 14px 32px; border-radius: 3px; font-size: 13px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; font-family: Arial, sans-serif;
+}
+
+/* ── IMG PLACEHOLDER ── */
+.img-ph {
+  background: var(--gray-light); border: 1px solid var(--gray-mid);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gray-dark); font-size: 11px; font-family: Arial, sans-serif;
+  letter-spacing: .06em; text-transform: uppercase;
+}
+
+/* ── NAV ── */
+.nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 60px; background: #fff; border-bottom: 1px solid var(--gray-mid);
+  position: sticky; top: 0; z-index: 10;
+}
+.nav-logo { font-size: 24px; font-style: italic; color: var(--black); letter-spacing: 1px; }
+.nav-links { display: flex; gap: 32px; font-family: Arial, sans-serif; font-size: 13px; color: var(--black); letter-spacing: .05em; }
+.nav-actions { display: flex; align-items: center; gap: 20px; font-family: Arial, sans-serif; font-size: 13px; }
+.nav-phone { color: var(--gray-dark); }
+
+/* ── HERO ── */
+.hero {
+  display: flex; min-height: 620px; background: var(--cream);
+}
+.hero-left {
+  flex: 1.1; padding: 80px 60px;
+  display: flex; flex-direction: column; justify-content: center; gap: 24px;
+}
+.hero-location {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-family: Arial, sans-serif; color: var(--gray-dark); letter-spacing: .08em;
+}
+.hero-micro {
+  font-size: 13px; font-family: Arial, sans-serif; color: var(--accent);
+  letter-spacing: .08em; font-style: italic;
+}
+.hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+.hero-right {
+  flex: 0.9; position: relative; overflow: hidden;
+}
+.hero-img { width: 100%; height: 100%; }
+.hero-overlay {
+  position: absolute; bottom: 32px; left: 32px;
+  background: rgba(255,255,255,0.92); border: 1px solid var(--gray-mid);
+  padding: 16px 24px; border-radius: 4px;
+}
+.hero-overlay p { font-size: 12px; margin-top: 4px; }
+
+/* ── PROOF BAR ── */
+.proof-bar {
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 28px 60px; background: var(--black);
+}
+.proof-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.proof-number { font-size: 32px; font-weight: 300; color: #fff; font-style: italic; }
+.proof-label { font-size: 11px; color: #aaa; font-family: Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.proof-divider { width: 1px; height: 48px; background: #444; }
+.stars { display: flex; gap: 3px; }
+.star { width: 14px; height: 14px; background: var(--accent); border-radius: 2px; }
+
+/* ── TRANSFORMATIONS ── */
+.transformations { padding: 72px 60px; background: var(--cream); }
+.trans-header { text-align: center; margin-bottom: 48px; }
+.trans-header h2 { margin-bottom: 12px; }
+.trans-grid { display: flex; gap: 16px; }
+.trans-card { flex: 1; position: relative; }
+.trans-img { width: 100%; height: 360px; }
+.trans-badge {
+  position: absolute; top: 14px; left: 14px;
+  background: var(--black); color: #fff;
+  font-size: 10px; font-weight: 700; padding: 5px 12px;
+  border-radius: 3px; font-family: Arial, sans-serif; letter-spacing: .06em; text-transform: uppercase;
+}
+.trans-caption { padding: 12px 0; font-size: 12px; color: var(--gray-dark); font-family: Arial, sans-serif; }
+.reviews-row { display: flex; gap: 20px; margin-top: 40px; }
+.review-card {
+  flex: 1; background: #fff; border: 1px solid var(--gray-mid);
+  border-radius: 4px; padding: 20px; display: flex; flex-direction: column; gap: 10px;
+}
+.reviewer { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.reviewer-av {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--gray-mid); flex-shrink: 0;
+}
+.reviewer-name { font-size: 13px; font-weight: 700; font-family: Arial, sans-serif; }
+.reviewer-sub { font-size: 11px; color: var(--gray-dark); font-family: Arial, sans-serif; }
+
+/* ── WHY FRAMED ── */
+.why { display: flex; min-height: 500px; }
+.why-left { flex: 1; }
+.why-left .img-ph { width: 100%; height: 100%; }
+.why-right {
+  flex: 1; padding: 72px 60px;
+  display: flex; flex-direction: column; justify-content: center; gap: 24px;
+  background: #fff;
+}
+.why-list { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+.why-item { display: flex; align-items: flex-start; gap: 12px; }
+.why-check {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--black); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-family: Arial, sans-serif; flex-shrink: 0; margin-top: 2px;
+}
+.why-text { font-size: 15px; font-family: Arial, sans-serif; color: var(--black); }
+.why-tagline { font-style: italic; font-size: 16px; color: var(--black); margin-top: 8px; line-height: 1.5; border-left: 3px solid var(--accent); padding-left: 16px; }
+
+/* ── WHO IT'S FOR ── */
+.who { padding: 72px 60px; background: var(--gray-light); display: flex; gap: 60px; align-items: center; }
+.who-left { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+.who-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.who-item { font-size: 15px; font-family: Arial, sans-serif; color: var(--black); padding: 10px 16px; background: #fff; border-radius: 4px; border-left: 3px solid var(--accent); }
+.who-close { font-style: italic; font-size: 17px; line-height: 1.6; color: var(--black); margin-top: 12px; }
+.who-right { flex: 1; }
+.who-img { width: 100%; height: 420px; border-radius: 4px; }
+
+/* ── METHODS ── */
+.methods { padding: 72px 60px; background: #fff; }
+.methods-grid { display: flex; gap: 24px; margin-top: 40px; }
+.method-card {
+  flex: 1; border: 1px solid var(--gray-mid); border-radius: 4px;
+  overflow: hidden; position: relative;
+}
+.method-img { width: 100%; height: 220px; }
+.method-body { padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+.method-badge {
+  position: absolute; top: 14px; right: 14px;
+  background: var(--accent); color: #fff;
+  font-size: 10px; font-weight: 700; padding: 4px 10px;
+  border-radius: 20px; font-family: Arial, sans-serif;
+}
+
+/* ── PROCESS ── */
+.process { padding: 72px 60px; background: var(--cream); }
+.process-steps { display: flex; gap: 0; margin-top: 48px; position: relative; }
+.process-steps::before {
+  content: ''; position: absolute; top: 28px; left: 40px; right: 40px;
+  height: 1px; background: var(--gray-mid);
+}
+.process-step { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; padding: 0 20px; }
+.step-num {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--black); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-style: italic; position: relative; z-index: 1;
+}
+.step-title { font-size: 15px; font-weight: 700; font-family: Arial, sans-serif; color: var(--black); }
+.step-desc { font-size: 13px; color: var(--gray-dark); font-family: Arial, sans-serif; line-height: 1.5; }
+
+/* ── INVESTMENT ── */
+.investment { display: flex; min-height: 480px; }
+.investment-left {
+  flex: 1; padding: 72px 60px;
+  display: flex; flex-direction: column; justify-content: center; gap: 24px;
+  background: var(--black); color: #fff;
+}
+.investment-left h2 { color: #fff; }
+.investment-left p { color: #aaa; }
+.investment-right { flex: 1; }
+.investment-right .img-ph { width: 100%; height: 100%; }
+.price-cards { display: flex; gap: 16px; margin-top: 8px; }
+.price-card {
+  flex: 1; border: 1px solid #444; border-radius: 4px; padding: 20px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.price-amount { font-size: 32px; font-weight: 300; color: #fff; font-style: italic; }
+.price-label { font-size: 13px; color: #aaa; font-family: Arial, sans-serif; }
+.price-note { font-size: 12px; color: #666; font-family: Arial, sans-serif; line-height: 1.5; }
+.deposit-notes { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.deposit-note { font-size: 13px; color: #aaa; font-family: Arial, sans-serif; display: flex; gap: 8px; }
+
+/* ── BOOKING FORM ── */
+.booking { padding: 72px 60px; background: var(--cream); }
+.booking-inner { max-width: 640px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+.booking-header { text-align: center; }
+.booking-header h2 { margin-bottom: 12px; }
+.form-row { display: flex; gap: 16px; }
+.form-field { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-family: Arial, sans-serif; color: var(--black); }
+.form-input {
+  height: 48px; background: #fff; border: 1px solid var(--gray-mid);
+  border-radius: 3px; padding: 0 14px; font-size: 14px; font-family: Arial, sans-serif;
+  color: var(--gray-dark);
+}
+.form-textarea {
+  height: 100px; background: #fff; border: 1px solid var(--gray-mid);
+  border-radius: 3px; padding: 14px; font-size: 14px; font-family: Arial, sans-serif;
+  color: var(--gray-dark); resize: none;
+}
+.form-submit { align-self: center; padding: 16px 56px; font-size: 14px; }
+
+/* ── LOCATION ── */
+.location { display: flex; }
+.location-map { flex: 1; height: 300px; }
+.location-info {
+  flex: 1; padding: 56px 60px;
+  display: flex; flex-direction: column; justify-content: center; gap: 16px;
+  background: var(--gray-light);
+}
+
+/* ── FINAL CTA ── */
+.final-cta {
+  padding: 80px 60px; background: var(--black); text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 24px;
+}
+.final-cta h2 { color: #fff; font-size: 44px; }
+.final-cta p { color: #aaa; max-width: 500px; }
+.final-cta-btns { display: flex; gap: 16px; }
+.avail-note { font-size: 13px; color: #666; font-family: Arial, sans-serif; font-style: italic; }
+
+/* ── FOOTER ── */
+.footer {
+  padding: 28px 60px; background: var(--black);
+  border-top: 1px solid #333;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-logo { font-size: 18px; font-style: italic; color: #fff; }
+.footer-links { display: flex; gap: 24px; font-size: 12px; color: #666; font-family: Arial, sans-serif; }
+.footer-copy { font-size: 12px; color: #666; font-family: Arial, sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav section">
+  <div class="nav-logo">Framed Hair</div>
+  <div class="nav-links">
+    <span>Extensions</span>
+    <span>Methods</span>
+    <span>Transformations</span>
+    <span>Investment</span>
+    <span>About</span>
+  </div>
+  <div class="nav-actions">
+    <span class="nav-phone">438 878 6891</span>
+    <div class="btn-dark">Book a consultation</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero section">
+  <div class="hero-left">
+    <div class="hero-location">
+      <div style="width:14px;height:14px;border-radius:50%;background:var(--gray-mid);"></div>
+      Private Studio · Old Port of Montreal
+    </div>
+    <div class="eyebrow">Luxury Hair Extensions</div>
+    <h1>Wake up Confident,<br>Powerful and<br>Beautiful. Every day.</h1>
+    <p>At Framed, we don't just install hair extensions — we elevate your entire look with seamless, damage-free methods designed for real life and long-term hair health.</p>
+    <div class="hero-micro">Seamless. Damage-free. Custom to you.</div>
+    <div class="hero-ctas">
+      <div class="btn-dark">→ Book Your Consultation</div>
+      <div class="btn-outline">Call 438 878 6891</div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="img-ph hero-img">Hero Image</div>
+    <div class="hero-overlay">
+      <div class="eyebrow">Luxury Hair. Effortless Confidence.</div>
+      <p>Old Port of Montreal · By appointment only</p>
+    </div>
+  </div>
+</div>
+
+<!-- PROOF BAR -->
+<div class="proof-bar section">
+  <div class="proof-item">
+    <div class="proof-number">500+</div>
+    <div class="proof-label">Transformations</div>
+  </div>
+  <div class="proof-divider"></div>
+  <div class="proof-item">
+    <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+    <div class="proof-label">5-Star Google Reviews</div>
+  </div>
+  <div class="proof-divider"></div>
+  <div class="proof-item">
+    <div class="proof-number">100%</div>
+    <div class="proof-label">Human Hair Only</div>
+  </div>
+  <div class="proof-divider"></div>
+  <div class="proof-item">
+    <div class="proof-number">0</div>
+    <div class="proof-label">Damage Guaranteed</div>
+  </div>
+</div>
+
+<!-- TRANSFORMATIONS -->
+<div class="transformations section">
+  <div class="trans-header">
+    <div class="eyebrow" style="margin-bottom:12px;">Social Proof / Transformations</div>
+    <h2>Real transformations.<br><em>Real confidence.</em></h2>
+    <p style="margin-top:12px;">No filters. No shortcuts. Just results.</p>
+  </div>
+  <div class="trans-grid">
+    <div class="trans-card">
+      <div class="img-ph trans-img">Before</div>
+      <div class="trans-badge">Before</div>
+      <div class="trans-caption">Client transformation · Genius Weft</div>
+    </div>
+    <div class="trans-card">
+      <div class="img-ph trans-img">After</div>
+      <div class="trans-badge" style="background:var(--accent);">After</div>
+      <div class="trans-caption">Added volume + length · 6 weeks later</div>
+    </div>
+    <div class="trans-card">
+      <div class="img-ph trans-img">Before</div>
+      <div class="trans-badge">Before</div>
+      <div class="trans-caption">Client transformation · K-Tips</div>
+    </div>
+    <div class="trans-card">
+      <div class="img-ph trans-img">After</div>
+      <div class="trans-badge" style="background:var(--accent);">After</div>
+      <div class="trans-caption">Natural finish · Undetectable</div>
+    </div>
+  </div>
+  <!-- Google Reviews -->
+  <div style="margin-top:48px;">
+    <div class="eyebrow" style="margin-bottom:20px;">Google Reviews</div>
+    <div class="reviews-row">
+      <div class="review-card">
+        <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+        <p style="font-style:italic;">"The most natural-looking extensions I've ever had. Everyone thinks it's my real hair."</p>
+        <div class="reviewer">
+          <div class="reviewer-av"></div>
+          <div>
+            <div class="reviewer-name">Sophie M.</div>
+            <div class="reviewer-sub">Montreal · Genius Weft client</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+        <p style="font-style:italic;">"Worth every penny. Damage-free, gorgeous, and the consultation was so thorough."</p>
+        <div class="reviewer">
+          <div class="reviewer-av"></div>
+          <div>
+            <div class="reviewer-name">Camille D.</div>
+            <div class="reviewer-sub">Montreal · K-Tip client</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+        <p style="font-style:italic;">"I've tried 3 other salons. Framed is on another level. My hair has never looked better."</p>
+        <div class="reviewer">
+          <div class="reviewer-av"></div>
+          <div>
+            <div class="reviewer-name">Amélie T.</div>
+            <div class="reviewer-sub">Montreal · Cocktail Mix client</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:32px;text-align:center;">
+    <div class="btn-dark">→ Book Your Consultation</div>
+  </div>
+</div>
+
+<!-- WHY FRAMED -->
+<div class="why section">
+  <div class="why-left">
+    <div class="img-ph" style="width:100%;height:100%;min-height:520px;">Studio Photo</div>
+  </div>
+  <div class="why-right">
+    <div class="eyebrow">The Framed Experience</div>
+    <h2>Why Framed?</h2>
+    <div class="why-list">
+      <div class="why-item">
+        <div class="why-check">✓</div>
+        <div class="why-text">Premium 100% human hair — custom-ordered for you</div>
+      </div>
+      <div class="why-item">
+        <div class="why-check">✓</div>
+        <div class="why-text">Invisible, comfortable installation</div>
+      </div>
+      <div class="why-item">
+        <div class="why-check">✓</div>
+        <div class="why-text">Tailored to your face + lifestyle</div>
+      </div>
+      <div class="why-item">
+        <div class="why-check">✓</div>
+        <div class="why-text">Long-lasting, damage-free methods</div>
+      </div>
+      <div class="why-item">
+        <div class="why-check">✓</div>
+        <div class="why-text">Results that look like your hair... but enhanced</div>
+      </div>
+    </div>
+    <div class="why-tagline">"Results that look like your hair — but enhanced."</div>
+    <div style="margin-top:16px;"><div class="btn-outline">Learn about our methods</div></div>
+  </div>
+</div>
+
+<!-- WHO IT'S FOR -->
+<div class="who section">
+  <div class="who-left">
+    <div class="eyebrow">Who It's For</div>
+    <h2>Framed is for women who:</h2>
+    <div class="who-list">
+      <div class="who-item">Want to feel put together effortlessly</div>
+      <div class="who-item">Value quality over shortcuts</div>
+      <div class="who-item">Are ready to invest in themselves</div>
+      <div class="who-item">Understand maintenance = luxury</div>
+    </div>
+    <p class="who-close">If you want "cheap," this isn't it.<br>If you want <strong>perfect</strong>, you're in the right place.</p>
+  </div>
+  <div class="who-right">
+    <div class="img-ph who-img">Client lifestyle photo</div>
+  </div>
+</div>
+
+<!-- METHODS -->
+<div class="methods section">
+  <div class="eyebrow" style="margin-bottom:12px;">Our Signature Methods</div>
+  <h2>Three ways to<br><em>transform your hair</em></h2>
+  <div class="methods-grid">
+    <div class="method-card">
+      <div class="img-ph method-img">Genius Weft Photo</div>
+      <div class="method-badge">Most Popular</div>
+      <div class="method-body">
+        <h3>Genius Weft</h3>
+        <p>Ultra-flat, flexible, undetectable. Ideal for volume + length. The most natural finish available.</p>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="img-ph method-img">K-Tips Photo</div>
+      <div class="method-body">
+        <h3>K-Tips</h3>
+        <p>Long-lasting, discreet, perfect for customized placement. Ideal for adding targeted volume.</p>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="img-ph method-img">Cocktail Mix Photo</div>
+      <div class="method-body">
+        <h3>Cocktail Mix</h3>
+        <p>K-tips for hard-to-reach areas, paired with wefts for maximum volume. The ultimate transformation.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROCESS -->
+<div class="process section">
+  <div style="text-align:center;margin-bottom:16px;">
+    <div class="eyebrow">Your Transformation Starts Here</div>
+  </div>
+  <h2 style="text-align:center;">What to Expect</h2>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="step-num">1</div>
+      <div class="step-title">Free FaceTime Consultation</div>
+      <div class="step-desc">We discuss your hair goals, lifestyle, and what's possible for you.</div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">2</div>
+      <div class="step-title">Colour Match Appointment</div>
+      <div class="step-desc">In-person visit to find your perfect match. Hair is custom-ordered for you.</div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">3</div>
+      <div class="step-title">Installation + Custom Cut</div>
+      <div class="step-desc">Seamless installation, custom cut and style. Walk out ready to go.</div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">4</div>
+      <div class="step-title">Walk Out Transformed</div>
+      <div class="step-desc">Leave with hair that matches the life you're building.</div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:48px;">
+    <div class="btn-dark" style="display:inline-block;">Book Your First Free Consultation</div>
+  </div>
+</div>
+
+<!-- INVESTMENT -->
+<div class="investment section">
+  <div class="investment-left">
+    <div class="eyebrow" style="color:#888;">Investment</div>
+    <h2>Transparent<br><em>pricing.</em></h2>
+    <p>All-inclusive packages. No hidden fees. Your hair is custom-ordered for you.</p>
+    <div class="price-cards">
+      <div class="price-card">
+        <div class="price-label">Starter Set</div>
+        <div class="price-amount">$745+</div>
+        <div class="price-note">All-inclusive: hair, installation, custom cut + styling</div>
+      </div>
+      <div class="price-card">
+        <div class="price-label">K-Tip Services</div>
+        <div class="price-amount">$290+</div>
+        <div class="price-note">Discreet, targeted placement for volume and length</div>
+      </div>
+    </div>
+    <div class="deposit-notes">
+      <div class="deposit-note">✔ 50% deposit required to secure your booking</div>
+      <div class="deposit-note">✔ Hair is custom-ordered specifically for you</div>
+    </div>
+    <div style="margin-top:16px;"><div class="btn-light">Book Your Appointment</div></div>
+  </div>
+  <div class="investment-right">
+    <div class="img-ph" style="width:100%;height:100%;min-height:480px;">Investment / Studio Photo</div>
+  </div>
+</div>
+
+<!-- BOOKING FORM -->
+<div class="booking section">
+  <div class="booking-inner">
+    <div class="booking-header">
+      <div class="eyebrow" style="margin-bottom:12px;">Book Your Appointment</div>
+      <h2>Your next chapter<br><em>deserves better hair.</em></h2>
+      <p style="margin-top:12px;">Limited availability each week. Secure your spot now.</p>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <div class="form-label">First Name</div>
+        <div class="form-input" style="display:flex;align-items:center;color:#bbb;">Your first name</div>
+      </div>
+      <div class="form-field">
+        <div class="form-label">Last Name</div>
+        <div class="form-input" style="display:flex;align-items:center;color:#bbb;">Your last name</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <div class="form-label">Phone</div>
+        <div class="form-input" style="display:flex;align-items:center;color:#bbb;">438 xxx xxxx</div>
+      </div>
+      <div class="form-field">
+        <div class="form-label">Email</div>
+        <div class="form-input" style="display:flex;align-items:center;color:#bbb;">your@email.com</div>
+      </div>
+    </div>
+    <div class="form-field">
+      <div class="form-label">What are you looking for?</div>
+      <div class="form-textarea" style="display:flex;align-items:flex-start;padding-top:14px;color:#bbb;">Tell us about your hair goals...</div>
+    </div>
+    <div class="btn-dark form-submit">→ Book Your Free Consultation</div>
+    <p style="text-align:center;font-size:12px;color:var(--gray-dark);">Or call us directly: 438 878 6891</p>
+  </div>
+</div>
+
+<!-- LOCATION -->
+<div class="location section">
+  <div class="img-ph location-map">Map Placeholder · Old Port + Griffintown, Montreal</div>
+  <div class="location-info">
+    <div class="eyebrow">Find Us</div>
+    <h3>Private Studio<br>Montreal</h3>
+    <p>Located in the Griffintown and Old Port area of Montreal.<br>By appointment only.</p>
+    <div style="margin-top:8px;">
+      <div class="btn-outline">Get Directions</div>
+    </div>
+  </div>
+</div>
+
+<!-- FINAL CTA -->
+<div class="final-cta section">
+  <div class="eyebrow" style="color:#666;">Final Call to Action</div>
+  <h2>You need the hair that matches<br>the life you're building.</h2>
+  <p>Limited availability each week. Don't wait to feel like yourself.</p>
+  <div class="final-cta-btns">
+    <div class="btn-light">→ Book your consultation now</div>
+    <div class="btn-outline" style="border-color:#444;color:#aaa;">→ Secure your install date</div>
+  </div>
+  <div class="avail-note">Limited availability each week.</div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="footer-logo">Framed Hair</div>
+  <div class="footer-links">
+    <span>Privacy Policy</span>
+    <span>Terms</span>
+    <span>Contact</span>
+  </div>
+  <div class="footer-copy">© 2025 Framed Hair. Montreal, QC.</div>
+</div>
+
+</body>
+</html>
