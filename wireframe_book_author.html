@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Arial', sans-serif; background: #fff; width: 1440px; }
+
+/* Brand tokens */
+:root {
+  --black: #0d0d0d;
+  --white: #ffffff;
+  --green: #74bf43;
+  --violet: #6c70b4;
+  --purple: #ad82ba;
+  --red: #f15a40;
+  --gray-light: #f5f5f5;
+  --gray-mid: #cccccc;
+  --gray-dark: #888888;
+}
+
+.bar { border-radius: 3px; background: var(--gray-mid); display: block; }
+
+/* ── SECTION WRAPPER ── */
+.section { border-bottom: 1px solid var(--gray-mid); }
+.section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--gray-dark); margin-bottom: 10px;
+}
+
+/* ── NAV ── */
+.nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 60px; background: #fff; border-bottom: 1px solid var(--gray-mid);
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; }
+.nav-logo-mark {
+  width: 32px; height: 32px; position: relative;
+}
+.nav-logo-mark svg { width: 32px; height: 32px; }
+.nav-logo-text { font-size: 22px; font-weight: 900; color: var(--black); letter-spacing: -0.5px; }
+.nav-links { display: flex; gap: 32px; font-size: 14px; color: var(--black); }
+.nav-cta {
+  background:#888; color: #fff;
+  padding: 9px 22px; border-radius: 6px; font-size: 13px; font-weight: 600;
+}
+
+/* ── HERO ── */
+.hero {
+  display: flex; min-height: 380px;
+}
+.hero-left { flex: 1;
+  padding: 56px 60px; display: flex; flex-direction: column;
+  justify-content: center; gap: 16px; border-right: 1px solid var(--gray-mid);
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background:#f0f0f0; border:1px solid #aaa;
+  color:#666; font-size: 12px; font-weight: 600;
+  padding: 5px 12px; border-radius: 20px; width: fit-content;
+}
+.hero-title-block { display: flex; flex-direction: column; gap: 10px; }
+.hero-tagline-block { display: flex; flex-direction: column; gap: 7px; margin-top: 4px; }
+.hero-ctas { display: flex; gap: 12px; margin-top: 12px; }
+.btn-primary {
+  background: var(--black); color: #fff;
+  padding: 11px 24px; border-radius: 6px; font-size: 13px; font-weight: 600;
+}
+.btn-secondary {
+  background: #fff; color: var(--black);
+  padding: 11px 24px; border-radius: 6px; font-size: 13px;
+  border: 1px solid var(--gray-mid);
+}
+.hero-right { flex: 1;
+  background: var(--gray-light); display: flex;
+  align-items: center; justify-content: center; padding: 40px;
+}
+.book-cover {
+  width: 160px; height: 240px; border-radius: 3px 8px 8px 3px;
+  background: #fff; border: 1px solid var(--gray-mid);
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 5px 5px 0 var(--gray-mid);
+}
+.book-cover-top { height: 55%; background:#888; }
+.book-cover-bottom { flex: 1; padding: 12px; display: flex; flex-direction: column; gap: 6px; justify-content: flex-end; }
+
+/* ── BOOKS GRID ── */
+.books { padding: 48px 60px; background: var(--gray-light); }
+.books-grid { display: flex; gap: 20px; margin-top: 24px; }
+.book-card { flex: 1;
+  background: #fff; border: 1px solid var(--gray-mid); border-radius: 8px; overflow: hidden;
+}
+.book-card-img { height: 160px; background: var(--gray-light); border-bottom: 1px solid var(--gray-mid); }
+.book-card-body { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.book-card-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+.genre-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 10px;
+  border-radius: 4px; color: #fff;
+}
+
+/* ── ABOUT ── */
+.about { padding: 56px 60px; display: flex; gap: 48px; align-items: flex-start; }
+.author-photo {
+  width: 200px; height: 240px; border-radius: 10px;
+  background: var(--gray-light); border: 1px solid var(--gray-mid);
+}
+.about-content { display: flex; flex-direction: column; gap: 14px; padding-top: 4px; }
+.about-copy { display: flex; flex-direction: column; gap: 7px; margin-top: 4px; }
+.social-links { display: flex; gap: 10px; margin-top: 8px; }
+.social-pill {
+  display: flex; align-items: center; gap: 6px;
+  border: 1px solid var(--gray-mid); border-radius: 20px;
+  padding: 6px 14px; font-size: 12px; color: var(--gray-dark);
+}
+
+/* ── PRESS ── */
+.press { padding: 48px 60px; background: var(--gray-light); }
+.press-grid { display: flex; gap: 20px; margin-top: 24px; }
+.press-card { flex: 1;
+  background: #fff; border: 1px solid var(--gray-mid); border-radius: 8px; padding: 20px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.stars { display: flex; gap: 3px; }
+.star { width: 14px; height: 14px; background: #bbb; border-radius: 2px; }
+.press-copy { display: flex; flex-direction: column; gap: 5px; }
+.press-attr { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+
+/* ── EVENTS + NEWSLETTER ── */
+.events-newsletter { display: flex; gap: 48px; 
+  padding: 48px 60px; display: flex; gap: 48px;
+}
+.events { display: flex; flex-direction: column; gap: 12px; }
+.event-item {
+  display: flex; gap: 14px; align-items: center;
+  padding: 14px; background: var(--gray-light);
+  border: 1px solid var(--gray-mid); border-radius: 8px;
+}
+.event-date {
+  width: 44px; height: 44px; border-radius: 6px;
+  background: #fff; border: 1px solid var(--gray-mid);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  flex-shrink: 0;
+}
+.event-info { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.location-badge {
+  font-size: 10px; font-weight: 700; padding: 2px 8px;
+  border-radius: 4px; background:#f0f0f0; color:#666;
+  border:1px solid #aaa;
+}
+.newsletter-box {
+  background: var(--gray-light); border: 1px solid var(--gray-mid);
+  border-radius: 8px; padding: 28px; display: flex; flex-direction: column; gap: 14px;
+}
+.email-input {
+  width: 100%; padding: 10px 14px; border: 1px solid var(--gray-mid);
+  border-radius: 6px; background: #fff; font-size: 13px; color: var(--gray-dark);
+  margin-top: 4px;
+}
+.subscribe-btn {
+  background: #555; color: #fff;
+  padding: 10px 24px; border-radius: 6px; font-size: 13px; font-weight: 600;
+  width: fit-content;
+}
+
+/* ── FOOTER ── */
+.footer {
+  padding: 20px 60px; background: var(--black);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-links { display: flex; gap: 24px; font-size: 12px; color: var(--gray-dark); }
+.footer-copy { font-size: 12px; color: var(--gray-dark); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav section">
+  <div class="nav-logo">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 4L14 13L10 17L2 8Z" fill="#ffc60b" rx="2"/>
+      <path d="M26 4L18 13L22 17L30 8Z" fill="#ffc60b"/>
+      <path d="M4 28L14 17L22 17L30 28H4Z" fill="#0d0d0d"/>
+    </svg>
+    <span class="nav-logo-text">cruxy</span>
+  </div>
+  <div class="nav-links">
+    <span>Books</span><span>About</span><span>Press</span><span>Events</span>
+  </div>
+  <div class="nav-cta">Newsletter</div>
+</div>
+
+<!-- HERO -->
+<div class="hero section">
+  <div class="hero-left">
+    <div class="hero-badge">★ New release · 2025</div>
+    <div class="hero-title-block">
+      <span class="bar" style="width:82%;height:18px;background:#0d0d0d;"></span>
+      <span class="bar" style="width:64%;height:18px;background:#0d0d0d;"></span>
+    </div>
+    <div class="hero-tagline-block">
+      <span class="bar" style="width:90%;height:9px;"></span>
+      <span class="bar" style="width:75%;height:9px;"></span>
+      <span class="bar" style="width:55%;height:9px;"></span>
+    </div>
+    <div class="hero-ctas">
+      <div class="btn-primary">Buy the book</div>
+      <div class="btn-secondary">Read excerpt ↗</div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="book-cover">
+      <div class="book-cover-top"></div>
+      <div class="book-cover-bottom">
+        <span class="bar" style="width:80%;height:8px;background:#ccc;"></span>
+        <span class="bar" style="width:55%;height:7px;background:#ddd;"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKS GRID -->
+<div class="books section">
+  <div class="section-label">Books</div>
+  <div class="books-grid">
+    <div class="book-card">
+      <div class="book-card-img"></div>
+      <div class="book-card-body">
+        <span class="bar" style="width:85%;height:9px;"></span>
+        <span class="bar" style="width:55%;height:7px;"></span>
+        <div class="book-card-meta">
+          <span class="genre-badge" style="background:#888;">Fiction</span>
+          <span class="bar" style="width:30px;height:7px;"></span>
+        </div>
+      </div>
+    </div>
+    <div class="book-card">
+      <div class="book-card-img"></div>
+      <div class="book-card-body">
+        <span class="bar" style="width:80%;height:9px;"></span>
+        <span class="bar" style="width:50%;height:7px;"></span>
+        <div class="book-card-meta">
+          <span class="genre-badge" style="background:#888;">Memoir</span>
+          <span class="bar" style="width:30px;height:7px;"></span>
+        </div>
+      </div>
+    </div>
+    <div class="book-card">
+      <div class="book-card-img"></div>
+      <div class="book-card-body">
+        <span class="bar" style="width:75%;height:9px;"></span>
+        <span class="bar" style="width:60%;height:7px;"></span>
+        <div class="book-card-meta">
+          <span class="genre-badge" style="background:#888;">Fiction</span>
+          <span class="bar" style="width:30px;height:7px;"></span>
+        </div>
+      </div>
+    </div>
+    <div class="book-card">
+      <div class="book-card-img"></div>
+      <div class="book-card-body">
+        <span class="bar" style="width:88%;height:9px;"></span>
+        <span class="bar" style="width:45%;height:7px;"></span>
+        <div class="book-card-meta">
+          <span class="genre-badge" style="background:#888;">Essay</span>
+          <span class="bar" style="width:30px;height:7px;"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="about section">
+  <div class="author-photo"></div>
+  <div class="about-content">
+    <div class="section-label">About the author</div>
+    <span class="bar" style="width:55%;height:13px;background:#0d0d0d;border-radius:3px;"></span>
+    <div class="about-copy">
+      <span class="bar" style="width:100%;height:8px;"></span>
+      <span class="bar" style="width:97%;height:8px;"></span>
+      <span class="bar" style="width:92%;height:8px;"></span>
+      <span class="bar" style="width:85%;height:8px;"></span>
+      <span class="bar" style="width:68%;height:8px;"></span>
+    </div>
+    <div class="social-links">
+      <div class="social-pill">𝕏 Twitter</div>
+      <div class="social-pill">◎ Instagram</div>
+      <div class="social-pill">📖 Goodreads</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRESS -->
+<div class="press section">
+  <div class="section-label">Press &amp; praise</div>
+  <div class="press-grid">
+    <div class="press-card">
+      <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+      <div class="press-copy">
+        <span class="bar" style="width:100%;height:7px;"></span>
+        <span class="bar" style="width:90%;height:7px;"></span>
+        <span class="bar" style="width:70%;height:7px;"></span>
+      </div>
+      <div class="press-attr">
+        <span class="bar" style="width:50%;height:8px;background:#0d0d0d;border-radius:3px;"></span>
+        <span class="bar" style="width:35%;height:7px;"></span>
+      </div>
+    </div>
+    <div class="press-card">
+      <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+      <div class="press-copy">
+        <span class="bar" style="width:100%;height:7px;"></span>
+        <span class="bar" style="width:85%;height:7px;"></span>
+        <span class="bar" style="width:60%;height:7px;"></span>
+      </div>
+      <div class="press-attr">
+        <span class="bar" style="width:45%;height:8px;background:#0d0d0d;border-radius:3px;"></span>
+        <span class="bar" style="width:30%;height:7px;"></span>
+      </div>
+    </div>
+    <div class="press-card">
+      <div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star" style="background:#ddd;"></div></div>
+      <div class="press-copy">
+        <span class="bar" style="width:100%;height:7px;"></span>
+        <span class="bar" style="width:92%;height:7px;"></span>
+        <span class="bar" style="width:65%;height:7px;"></span>
+      </div>
+      <div class="press-attr">
+        <span class="bar" style="width:55%;height:8px;background:#0d0d0d;border-radius:3px;"></span>
+        <span class="bar" style="width:40%;height:7px;"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EVENTS + NEWSLETTER -->
+<div class="events-newsletter section">
+  <div class="events">
+    <div class="section-label">Events &amp; appearances</div>
+    <div class="event-item">
+      <div class="event-date">
+        <span class="bar" style="width:22px;height:5px;"></span>
+        <span class="bar" style="width:18px;height:5px;"></span>
+      </div>
+      <div class="event-info">
+        <span class="bar" style="width:65%;height:9px;background:#0d0d0d;border-radius:3px;"></span>
+        <span class="bar" style="width:45%;height:7px;"></span>
+      </div>
+      <span class="location-badge">NYC</span>
+    </div>
+    <div class="event-item">
+      <div class="event-date">
+        <span class="bar" style="width:22px;height:5px;"></span>
+        <span class="bar" style="width:18px;height:5px;"></span>
+      </div>
+      <div class="event-info">
+        <span class="bar" style="width:60%;height:9px;background:#0d0d0d;border-radius:3px;"></span>
+        <span class="bar" style="width:40%;height:7px;"></span>
+      </div>
+      <span class="location-badge">Online</span>
+    </div>
+    <div class="event-item">
+      <div class="event-date">
+        <span class="bar" style="width:22px;height:5px;"></span>
+        <span class="bar" style="width:18px;height:5px;"></span>
+      </div>
+      <div class="event-info">
+        <span class="bar" style="width:70%;height:9px;background:#0d0d0d;border-radius:3px;"></span>
+        <span class="bar" style="width:50%;height:7px;"></span>
+      </div>
+      <span class="location-badge">LA</span>
+    </div>
+  </div>
+  <div>
+    <div class="section-label" style="margin-bottom:14px;">Newsletter signup</div>
+    <div class="newsletter-box">
+      <span class="bar" style="width:55%;height:11px;background:#0d0d0d;border-radius:3px;"></span>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <span class="bar" style="width:100%;height:7px;"></span>
+        <span class="bar" style="width:80%;height:7px;"></span>
+      </div>
+      <div class="email-input" style="color:#aaa;">Your email address</div>
+      <div class="subscribe-btn">Subscribe</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span class="footer-copy">© 2025 Author Name. All rights reserved.</span>
+  <div class="footer-links">
+    <span>Books</span><span>About</span><span>Press</span><span>Events</span><span>Contact</span>
+  </div>
+  <span class="footer-copy">cruxy.io</span>
+</div>
+
+</body>
+</html>
