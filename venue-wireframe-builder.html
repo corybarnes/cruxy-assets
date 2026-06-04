@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Venue Wireframe Builder — Cruxy</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:Arial,sans-serif;background:#e8ebef}
+
+:root{
+  --bg:        #f4f5f7;
+  --surface:   #ffffff;
+  --border:    #dde1e7;
+  --border2:   #c8cdd6;
+  --fill:      #e8ebef;
+  --fill2:     #d8dce4;
+  --text:      #3a4251;
+  --text2:     #6b7585;
+  --text3:     #9ba5b4;
+  --accent:    #5b7fa6;
+  --accent-lt: #dce8f5;
+  --dark:      #1e2530;
+  --dark2:     #2d3748;
+}
+
+#app{display:flex;height:100vh;overflow:hidden}
+
+#sidebar{width:240px;min-width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+#sidebar-header{padding:12px 14px 8px;border-bottom:1px solid var(--border)}
+#sidebar-header h3{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+#palette{flex:1;overflow-y:auto;padding:8px}
+.cat-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:10px 6px 4px}
+.block-chip{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:4px;cursor:pointer;font-size:12px;color:var(--text2);border:1px solid transparent;margin-bottom:2px;transition:background .1s}
+.block-chip:hover{background:var(--fill);border-color:var(--border)}
+.block-chip svg{width:13px;height:13px;flex-shrink:0;color:var(--text3)}
+
+#canvas-area{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#canvas-toolbar{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:var(--surface)}
+#canvas-toolbar select{font-size:11px;padding:5px 8px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text2);cursor:pointer}
+#block-count{font-size:11px;color:var(--text3);flex:1;margin-left:4px}
+.tbtn{font-size:11px;padding:5px 12px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text2);cursor:pointer;white-space:nowrap}
+.tbtn:hover{background:var(--fill)}
+.tbtn.danger:hover{background:#fef0f0;color:#c0392b;border-color:#e0b0b0}
+
+#canvas{flex:1;overflow-y:auto;padding:14px;background:var(--bg)}
+#empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text3);gap:8px;text-align:center}
+#empty p{font-size:13px}
+#empty small{font-size:11px;opacity:.7}
+
+.cb{background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:6px;overflow:hidden}
+.cb-header{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--fill);border-bottom:1px solid var(--border)}
+.cb-name{font-size:11px;font-weight:700;color:var(--text);flex:1}
+.cb-cat{font-size:10px;color:var(--text3);background:var(--border);padding:1px 6px;border-radius:3px}
+.cb-actions{display:flex;gap:3px}
+.cb-actions button{background:none;border:none;cursor:pointer;color:var(--text3);font-size:12px;padding:2px 5px;border-radius:3px;line-height:1}
+.cb-actions button:hover{color:var(--text);background:var(--border)}
+.cb-actions .del:hover{color:#c0392b}
+.cb-preview{overflow:hidden}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="sidebar">
+    <div id="sidebar-header"><h3>Venue Blocks</h3></div>
+    <div id="palette"></div>
+  </div>
+  <div id="canvas-area">
+    <div id="canvas-toolbar">
+      <select id="tpl-select">
+        <option value="">Load template…</option>
+        <option value="homepage_ecommerce">Homepage (Ecommerce)</option>
+        <option value="homepage_brand">Homepage (Brand Story)</option>
+        <option value="about">About Page</option>
+        <option value="contact">Contact Page</option>
+        <option value="landing">Landing Page (Product Launch)</option>
+        <option value="collection">Collection / Category</option>
+        <option value="faq">FAQ / Support</option>
+        <option value="events">Events Page</option>
+      </select>
+      <span id="block-count">0 blocks</span>
+      <button class="tbtn" onclick="exportList()">↗ Export to Claude</button>
+      <button class="tbtn danger" onclick="clearCanvas()">✕ Clear</button>
+    </div>
+    <div id="canvas">
+      <div id="empty">
+        <p>Click blocks to add them</p>
+        <small>or load a template above</small>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const C = {
+  bg:       '#f4f5f7',
+  surface:  '#ffffff',
+  border:   '#dde1e7',
+  border2:  '#c8cdd6',
+  fill:     '#e8ebef',
+  fill2:    '#d8dce4',
+  text:     '#3a4251',
+  text2:    '#6b7585',
+  text3:    '#9ba5b4',
+  accent:   '#5b7fa6',
+  accentLt: '#dce8f5',
+  dark:     '#1e2530',
+  dark2:    '#2d3748',
+};
+
+const blocks = [
+  {id:'slideshow',          name:'Slideshow',                  cat:'Hero',         h:420},
+  {id:'hero_video',         name:'Hero Video',                 cat:'Hero',         h:380},
+  {id:'img_text_banner',    name:'Image + Text Banner',        cat:'Hero',         h:320},
+  {id:'featured_collection',name:'Featured Collection',        cat:'Products',     h:480},
+  {id:'featured_product',   name:'Featured Product',           cat:'Products',     h:360},
+  {id:'product_recs',       name:'Product Recommendations',    cat:'Products',     h:280},
+  {id:'img_left_text',      name:'Image + Left Text',          cat:'Content',      h:340},
+  {id:'img_right_text',     name:'Image + Right Text',         cat:'Content',      h:340},
+  {id:'img_left_overlap',   name:'Image + Left Overlap Text',  cat:'Content',      h:300},
+  {id:'img_right_overlap',  name:'Image + Right Overlap Text', cat:'Content',      h:300},
+  {id:'before_after',       name:'Before / After',             cat:'Content',      h:260},
+  {id:'rich_text',          name:'Rich Text',                  cat:'Content',      h:160},
+  {id:'multicolumn_icons',  name:'Multicolumn Icons',          cat:'Content',      h:200},
+  {id:'multicolumn_images', name:'Multicolumn Images',         cat:'Content',      h:280},
+  {id:'logo_list',          name:'Logo List',                  cat:'Social Proof', h:100},
+  {id:'testimonial',        name:'Testimonial',                cat:'Social Proof', h:160},
+  {id:'testimonials_multi', name:'Testimonials Multiple',      cat:'Social Proof', h:200},
+  {id:'blog_posts',         name:'Blog Posts',                 cat:'Content',      h:280},
+  {id:'newsletter',         name:'Newsletter',                 cat:'Conversion',   h:180},
+  {id:'countdown',          name:'Countdown Timer',            cat:'Conversion',   h:140},
+  {id:'popup',              name:'Popup',                      cat:'Conversion',   h:80},
+  {id:'faqs',               name:'FAQs',                       cat:'Support',      h:200},
+  {id:'contact_form',       name:'Contact Form',               cat:'Support',      h:300},
+  {id:'map',                name:'Map',                        cat:'Support',      h:280},
+  {id:'events',             name:'Events',                     cat:'Support',      h:220},
+  {id:'custom_html',        name:'Custom HTML',                cat:'Advanced',     h:80},
+  {id:'custom_liquid',      name:'Custom Liquid',              cat:'Advanced',     h:80},
+  {id:'announcement',       name:'Announcement Bar',           cat:'Utility',      h:36},
+  {id:'spacer',             name:'Spacer',                     cat:'Utility',      h:60},
+];
+
+const templates = {
+  homepage_ecommerce: ['slideshow','featured_collection','img_left_text','multicolumn_icons','testimonials_multi','newsletter'],
+  homepage_brand:     ['slideshow','img_text_banner','featured_collection','img_left_overlap','multicolumn_icons','before_after','testimonial','newsletter'],
+  about:              ['img_text_banner','rich_text','img_right_text','multicolumn_icons','logo_list','testimonials_multi'],
+  contact:            ['rich_text','contact_form','map'],
+  landing:            ['hero_video','featured_product','multicolumn_icons','before_after','testimonials_multi','countdown','newsletter'],
+  collection:         ['img_text_banner','rich_text','multicolumn_icons'],
+  faq:                ['rich_text','faqs','contact_form'],
+  events:             ['img_text_banner','events','rich_text','contact_form','map'],
+};
+
+const lorem3 = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.';
+const lorem2 = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+const lorem1 = 'Lorem ipsum dolor sit amet.';
+
+// shared mini-styles injected inline
+const s = {
+  lbl: `position:absolute;top:7px;left:10px;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:${C.text2};background:rgba(255,255,255,.88);padding:1px 7px;border-radius:8px;border:1px solid ${C.border};z-index:5;pointer-events:none`,
+  lblInv: `position:absolute;top:7px;left:10px;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);background:rgba(0,0,0,.38);padding:1px 7px;border-radius:8px;border:1px solid rgba(255,255,255,.15);z-index:5;pointer-events:none`,
+  eyebrow: `font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:${C.accent};font-family:Arial`,
+  hed: `font-size:13px;font-weight:700;color:${C.text};line-height:1.3;font-family:Arial`,
+  hedLg: `font-size:16px;font-weight:700;color:${C.text};line-height:1.2;font-family:Arial`,
+  hedInv: `font-size:13px;font-weight:700;color:rgba(255,255,255,.85);line-height:1.3;font-family:Arial`,
+  sub: `font-size:10px;font-weight:700;color:${C.text};font-family:Arial`,
+  lorem: `font-size:9px;color:${C.text3};line-height:1.5;font-family:Georgia,serif`,
+  loremInv: `font-size:9px;color:rgba(255,255,255,.38);line-height:1.5;font-family:Georgia,serif`,
+  price: `font-size:10px;color:${C.text2};font-family:Arial`,
+  rect: `border-radius:4px;background:${C.fill};border:1px solid ${C.border}`,
+  rectDark: `border-radius:4px;background:${C.fill2};border:1px solid ${C.border2}`,
+};
+
+const btn = (label, fill=false, inv=false) => {
+  const bg = fill ? C.dark : 'transparent';
+  const col = fill ? '#fff' : inv ? 'rgba(255,255,255,.75)' : C.text;
+  const border = fill ? C.dark : inv ? 'rgba(255,255,255,.5)' : C.text;
+  return `<div style="display:inline-block;padding:0 14px;height:28px;line-height:26px;border-radius:3px;border:1.5px solid ${border};font-size:9px;color:${col};font-family:Arial;background:${bg};white-space:nowrap">${label}</div>`;
+};
+const stars = () => `<div style="display:flex;gap:2px">${[0,1,2,3,4].map(()=>`<div style="width:9px;height:9px;background:${C.accent};border-radius:1px"></div>`).join('')}</div>`;
+
+function pv(id){
+  const h = blocks.find(b=>b.id===id)?.h || 120;
+  switch(id){
+
+    case 'slideshow': return `
+      <div style="position:relative;height:${h}px;overflow:hidden">
+        <div style="position:absolute;inset:0;background:${C.fill2}"></div>
+        <div style="position:absolute;inset:0;background:rgba(30,37,48,.55)"></div>
+        <div style="position:absolute;top:7px;left:10px;${s.lblInv}">Slideshow</div>
+        <div style="position:absolute;inset:0;display:flex;align-items:center">
+          <div style="padding:0 32px;max-width:55%;display:flex;flex-direction:column;gap:10px">
+            <div style="${s.eyebrow}">New Collection</div>
+            <div style="${s.hedLg}; color:rgba(255,255,255,.9)">Heading<br>Goes Here</div>
+            <div style="${s.loremInv}">${lorem2}</div>
+            <div style="display:flex;gap:8px;margin-top:4px">${btn('Shop Now',true)}${btn('Learn More',false,true)}</div>
+          </div>
+        </div>
+        <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px">
+          <div style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.9)"></div>
+          <div style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35)"></div>
+          <div style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35)"></div>
+        </div>
+      </div>`;
+
+    case 'hero_video': return `
+      <div style="position:relative;height:${h}px;background:${C.dark};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;overflow:hidden">
+        <div style="${s.lblInv}">Hero Video</div>
+        <div style="width:48px;height:48px;border-radius:50%;border:2px solid rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="rgba(255,255,255,.6)"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div style="${s.hedLg};color:rgba(255,255,255,.85);text-align:center">Heading Goes Here</div>
+        <div style="${s.loremInv};text-align:center;max-width:60%">${lorem2}</div>
+        <div style="display:flex;gap:8px">${btn('Shop Now',false,true)}${btn('Learn More',false,true)}</div>
+      </div>`;
+
+    case 'img_text_banner': return `
+      <div style="position:relative;height:${h}px;display:flex;background:${C.fill};overflow:hidden">
+        <div style="${s.lbl}">Image + Text Banner</div>
+        <div style="width:45%;background:${C.fill2};flex-shrink:0;border-right:1px solid ${C.border2}"></div>
+        <div style="flex:1;padding:32px 28px;display:flex;flex-direction:column;justify-content:center;gap:10px">
+          <div style="${s.eyebrow}">Our Story</div>
+          <div style="${s.hed};font-size:14px">Heading<br>Goes Here</div>
+          <div style="${s.lorem}">${lorem3}</div>
+          <div style="margin-top:4px">${btn('Learn More')}</div>
+        </div>
+      </div>`;
+
+    case 'featured_collection': return `
+      <div style="position:relative;height:${h}px;background:${C.surface};padding:24px 20px 16px;overflow:hidden">
+        <div style="${s.lbl}">Featured Collection</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px">
+          <div style="${s.sub}">Collection Title</div>
+          <div style="font-size:9px;color:${C.accent};text-decoration:underline;font-family:Arial">View all</div>
+        </div>
+        <div style="display:flex;gap:10px;height:${h-90}px">
+          ${[0,1,2,3].map(()=>`
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <div style="flex:1;${s.rect}"></div>
+            <div style="${s.lorem};font-size:8px">Product Name</div>
+            <div style="${s.price}">$00.00</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+
+    case 'featured_product': return `
+      <div style="position:relative;height:${h}px;display:flex;background:${C.fill};overflow:hidden">
+        <div style="${s.lbl}">Featured Product</div>
+        <div style="width:46%;background:${C.fill2};flex-shrink:0;border-right:1px solid ${C.border2}"></div>
+        <div style="flex:1;padding:32px 24px;display:flex;flex-direction:column;justify-content:center;gap:10px">
+          <div style="${s.eyebrow}">Featured</div>
+          <div style="${s.hed};font-size:14px">Product Name<br>Goes Here</div>
+          <div style="${s.price};font-size:13px">$00.00</div>
+          <div style="${s.lorem}">${lorem2}</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+            <div style="display:flex;gap:5px">${[0,1,2,3].map(()=>`<div style="width:22px;height:22px;border-radius:50%;background:${C.fill2};border:1px solid ${C.border2}"></div>`).join('')}</div>
+            ${btn('Add to Cart',true)}
+          </div>
+        </div>
+      </div>`;
+
+    case 'product_recs': return `
+      <div style="position:relative;height:${h}px;background:${C.surface};padding:20px 16px;overflow:hidden">
+        <div style="${s.lbl}">Product Recommendations</div>
+        <div style="${s.sub};margin-bottom:12px">You May Also Like</div>
+        <div style="display:flex;gap:10px;height:${h-66}px">
+          ${[0,1,2].map(()=>`
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <div style="flex:1;${s.rect}"></div>
+            <div style="${s.lorem};font-size:8px">Product Name</div>
+            <div style="${s.price}">$00.00</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+
+    case 'img_left_text': return `
+      <div style="position:relative;height:${h}px;display:flex;background:${C.fill};overflow:hidden">
+        <div style="${s.lbl}">Image + Left Text</div>
+        <div style="flex:1;padding:32px 28px;display:flex;flex-direction:column;justify-content:center;gap:10px">
+          <div style="${s.eyebrow}">Section Label</div>
+          <div style="${s.hed};font-size:14px">Heading Goes<br>Here</div>
+          <div style="${s.lorem}">${lorem3}</div>
+          <div style="margin-top:4px">${btn('Learn More')}</div>
+        </div>
+        <div style="width:48%;background:${C.fill2};flex-shrink:0;border-left:1px solid ${C.border2}"></div>
+      </div>`;
+
+    case 'img_right_text': return `
+      <div style="position:relative;height:${h}px;display:flex;background:${C.fill};overflow:hidden">
+        <div style="${s.lbl}">Image + Right Text</div>
+        <div style="width:48%;background:${C.fill2};flex-shrink:0;border-right:1px solid ${C.border2}"></div>
+        <div style="flex:1;padding:32px 28px;display:flex;flex-direction:column;justify-content:center;gap:10px">
+          <div style="${s.eyebrow}">Section Label</div>
+          <div style="${s.hed};font-size:14px">Heading Goes<br>Here</div>
+          <div style="${s.lorem}">${lorem3}</div>
+          <div style="margin-top:4px">${btn('Learn More')}</div>
+        </div>
+      </div>`;
+
+    case 'img_left_overlap': return `
+      <div style="position:relative;height:${h}px;background:${C.fill};display:flex;align-items:center;overflow:hidden">
+        <div style="${s.lbl}">Image + Left Overlap Text</div>
+        <div style="width:62%;height:100%;background:${C.fill2};flex-shrink:0;border-right:1px solid ${C.border2}"></div>
+        <div style="position:absolute;left:40%;right:16px;top:50%;transform:translateY(-50%);background:${C.surface};border:1px solid ${C.border};border-radius:4px;padding:20px;display:flex;flex-direction:column;gap:8px;z-index:2;box-shadow:0 2px 12px rgba(0,0,0,.08)">
+          <div style="${s.eyebrow}">Section Label</div>
+          <div style="${s.hed}">Heading Goes Here</div>
+          <div style="${s.lorem}">${lorem2}</div>
+          ${btn('Learn More')}
+        </div>
+      </div>`;
+
+    case 'img_right_overlap': return `
+      <div style="position:relative;height:${h}px;background:${C.fill};display:flex;align-items:center;overflow:hidden">
+        <div style="${s.lbl}">Image + Right Overlap Text</div>
+        <div style="position:absolute;left:16px;right:40%;top:50%;transform:translateY(-50%);background:${C.surface};border:1px solid ${C.border};border-radius:4px;padding:20px;display:flex;flex-direction:column;gap:8px;z-index:2;box-shadow:0 2px 12px rgba(0,0,0,.08)">
+          <div style="${s.eyebrow}">Section Label</div>
+          <div style="${s.hed}">Heading Goes Here</div>
+          <div style="${s.lorem}">${lorem2}</div>
+          ${btn('Learn More')}
+        </div>
+        <div style="width:62%;height:100%;background:${C.fill2};flex-shrink:0;border-left:1px solid ${C.border2};margin-left:auto"></div>
+      </div>`;
+
+    case 'before_after': return `
+      <div style="position:relative;height:${h}px;background:${C.surface};padding:24px 16px;overflow:hidden">
+        <div style="${s.lbl}">Before / After</div>
+        <div style="${s.sub};text-align:center;margin-bottom:14px">Before &amp; After</div>
+        <div style="display:flex;height:${h-78}px;border-radius:4px;overflow:hidden;border:1px solid ${C.border2}">
+          <div style="flex:1;background:${C.fill};display:flex;align-items:center;justify-content:center">
+            <span style="font-size:9px;color:${C.text3};font-family:Arial">Before</span>
+          </div>
+          <div style="width:2px;background:${C.border2};position:relative;display:flex;align-items:center;justify-content:center">
+            <div style="width:18px;height:18px;border-radius:50%;background:${C.surface};border:1.5px solid ${C.border2};position:absolute;display:flex;align-items:center;justify-content:center">
+              <span style="font-size:9px;color:${C.text3}">⇔</span>
+            </div>
+          </div>
+          <div style="flex:1;background:${C.fill2};display:flex;align-items:center;justify-content:center">
+            <span style="font-size:9px;color:${C.text2};font-family:Arial">After</span>
+          </div>
+        </div>
+      </div>`;
+
+    case 'rich_text': return `
+      <div style="position:relative;height:${h}px;background:${C.surface};padding:24px 40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;overflow:hidden">
+        <div style="${s.lbl}">Rich Text</div>
+        <div style="${s.eyebrow};text-align:center">Section Label</div>
+        <div style="${s.hed};font-size:15px;text-align:center">Heading Goes Here</div>
+        <div style="${s.lorem};text-align:center;max-width:80%">${lorem3}</div>
+        ${btn('Learn More')}
+      </div>`;
+
+    case 'multicolumn_icons': return `
+      <div style="position:relative;height:${h}px;background:${C.surface};padding:20px 16px;overflow:hidden">
+        <div style="${s.lbl}">Multicolumn Icons</div>
+        <div style="${s.sub};text-align:center;margin-bottom:14px">Why Choose Us</div>
+        <div style="display:flex;gap:10px">
+          ${[0,1,2,3].map(()=>`
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;padding:0 4px">
+            <div style="width:36px;height:36px;border-radius:50%;background:${C.accentLt};border:1px solid ${C.border2}"></div>
+            <div style="${s.sub};font-size:9px">Column Title</div>
+            <div style="${s.lorem};font-size:8px">${lorem1}</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+
+    case 'multicolumn_images': return `
+      <div style="position:relative;height:${h}px;background:${C.surface};padding:20px 16px;overflow:hidden">
+        <div style="${s.lbl}">Multicolumn Images</div>
+        <div style="${s.sub};text-align:center;margin-bottom:14px">Section Heading</div>
+        <div style="display:flex;gap:10px;height:${h-76}px">
+          ${[0,1,2].map(()=>`
+          <div style="flex:1;display:flex;flex-direction:column;gap:7px">
+            <div style="flex:1;${s.rect}"></div>
+            <div style="${s.sub};font-size:9px">Column Title</div>
+            <div style="${s.lorem};font-size:8px">${lorem1}</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+
+    case 'logo_list': return `
+      <div style="position:relative;height:${h}px;background:${C.surface};padding:14px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;overflow:hidden">
+        <div style="${s.lbl}">Logo List</div>
+        <div style="font-size:8px;color:${C.text3};letter-spacing:.08em;text-transform:uppercase;font-family:Arial">As Seen In</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:20px">
+          ${[0,1,2,3,4].map(()=>`<div style="width:52px;height:20px;${s.rect}"></div>`).join('')}
+        </div>
+      </div>`;
+
+    case 'testimonial': return `
+      <div style="position:relative;height:${h}px;background:${C.fill};padding:20px 40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;overflow:hidden">
+        <div style="${s.lbl}">Testimonial</div>
+        ${stars()}
+        <div style="${s.lorem};text-align:center;font-size:10px;font-style:italic;max-width:80%">"${lorem3}"</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:28px;height:28px;border-radius:50%;background:${C.fill2};border:1px solid ${C.border2}"></div>
+          <div style="font-size:9px;color:${C.text2};font-family:Arial">Customer Name</div>
+        </div>
+      </div>`;
+
+    case 'testimonials_multi': return `
+      <div style="position:relative;height:${h}px;background:${C.fill};padding:20px 14px;overflow:hidden">
+        <div style="${s.lbl}">Testimonials Multiple</div>
+        <div style="${s.sub};text-align:center;margin-bottom:12px">What Our Customers Say</div>
+        <div style="display:flex;gap:8px;height:${h-66}px">
+          ${[0,1,2].map(()=>`
+          <div style="flex:1;background:${C.surface};border:1px solid ${C.border};border-radius:4px;padding:10px;display:flex;flex-direction:column;gap:6px;overflow:hidden">
+            ${stars()}
+            <div style="${s.lorem};font-size:8px;font-style:italic">"${lorem2}"</div>
+            <div style="display:flex;align-items:center;gap:5px;margin-top:auto">
+              <div style="width:20px;height:20px;border-radius:50%;background:${C.fill2};border:1px solid ${C.border2};flex-shrink:0"></div>
+              <div style="font-size:8px;color:${C.text2};font-family:Arial">Customer Name</div>
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+
+    case 'blog_posts': return `
+      <div style="position:relative;height:${h}px;background:${C.surface};padding:20px 14px;overflow:hidden">
+        <div style="${s.lbl}">Blog Posts</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
+          <div style="${s.sub}">From the Blog</div>
+          <div style="font-size:9px;color:${C.accent};text-decoration:underline;font-family:Arial">View all</div>
+        </div>
+        <div style="display:flex;gap:10px;height:${h-68}px">
+          ${[0,1,2].map(()=>`
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <div style="flex:1;${s.rect}"></div>
+            <div style="font-size:8px;color:${C.accent};text-transform:uppercase;letter-spacing:.08em;font-family:Arial">Category</div>
+            <div style="${s.sub};font-size:9px">Post Title Goes Here</div>
+            <div style="${s.lorem};font-size:8px">${lorem1}</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+
+    case 'newsletter': return `
+      <div style="position:relative;height:${h}px;background:${C.dark};padding:20px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;overflow:hidden">
+        <div style="${s.lblInv}">Newsletter</div>
+        <div style="${s.hedInv};text-align:center;font-size:14px">Join Our Community</div>
+        <div style="${s.loremInv};text-align:center;max-width:70%">${lorem2}</div>
+        <div style="display:flex">
+          <div style="width:190px;height:36px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-right:none;border-radius:3px 0 0 3px;display:flex;align-items:center;padding:0 10px">
+            <span style="font-size:8px;color:rgba(255,255,255,.28);font-family:Arial">your@email.com</span>
+          </div>
+          <div style="width:76px;height:36px;background:${C.accent};border-radius:0 3px 3px 0;display:flex;align-items:center;justify-content:center">
+            <span style="font-size:8px;color:#fff;font-family:Arial">Subscribe</span>
+          </div>
+        </div>
+        <div style="font-size:8px;color:rgba(255,255,255,.2);font-family:Arial">We respect your privacy. Unsubscribe anytime.</div>
+      </div>`;
+
+    case 'countdown': return `
+      <div style="position:relative;height:${h}px;background:${C.fill};padding:16px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;overflow:hidden">
+        <div style="${s.lbl}">Countdown Timer</div>
+        <div style="${s.sub}">Offer Ends In</div>
+        <div style="display:flex;gap:10px">
+          ${['Days','Hrs','Min','Sec'].map(l=>`
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+            <div style="width:44px;height:44px;background:${C.dark};border-radius:4px;display:flex;align-items:center;justify-content:center">
+              <span style="font-size:14px;font-weight:700;color:#fff;font-family:Arial">00</span>
+            </div>
+            <span style="font-size:8px;color:${C.text3};text-transform:uppercase;letter-spacing:.08em;font-family:Arial">${l}</span>
+          </div>`).join('')}
+        </div>
+        ${btn('Shop the Sale',true)}
+      </div>`;
+
+    case 'popup': return `
+      <div style="position:relative;height:${h}px;background:${C.fill};display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px dashed ${C.border2}">
+        <div style="${s.lbl}">Popup</div>
+        <div style="background:${C.surface};border:1px solid ${C.border};border-radius:4px;padding:10px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 12px rgba(0,0,0,.1)">
+          <div style="${s.lorem};font-size:9px">Triggered on scroll / delay / exit intent</div>
+          ${btn('Subscribe',true)}
+        </div>
+      </div>`;
+
+    case 'faqs': return `
+      <div style="position:relative;height:${h}px;background:${C.surface};padding:20px 16px;overflow:hidden">
+        <div style="${s.lbl}">FAQs</div>
+        <div style="${s.sub};text-align:center;margin-bottom:14px">Frequently Asked Questions</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          ${[['How long does shipping take?',true],['What is your return policy?',false],['Do you offer wholesale pricing?',false],['How do I track my order?',false]].map(([q,open])=>`
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:${open?C.accentLt:C.fill};border:1px solid ${open?C.border2:C.border};border-radius:${open?'3px 3px 0 0':'3px'}">
+              <span style="font-size:9px;color:${open?C.accent:C.text};font-family:Arial;font-weight:${open?'700':'400'}">${q}</span>
+              <span style="font-size:11px;color:${C.text3}">${open?'∧':'∨'}</span>
+            </div>
+            ${open?`<div style="padding:8px 10px;background:${C.surface};border:1px solid ${C.border2};border-top:none;border-radius:0 0 3px 3px"><div style="${s.lorem};font-size:8px">${lorem2}</div></div>`:''}`).join('')}
+        </div>
+      </div>`;
+
+    case 'contact_form': return `
+      <div style="position:relative;height:${h}px;background:${C.surface};padding:20px 16px;overflow:hidden">
+        <div style="${s.lbl}">Contact Form</div>
+        <div style="${s.sub};text-align:center;margin-bottom:14px">Get in Touch</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:8px">
+            <div style="flex:1"><div style="font-size:8px;color:${C.text2};margin-bottom:3px;font-family:Arial">First Name</div><div style="height:28px;background:${C.fill};border:1px solid ${C.border};border-radius:3px"></div></div>
+            <div style="flex:1"><div style="font-size:8px;color:${C.text2};margin-bottom:3px;font-family:Arial">Last Name</div><div style="height:28px;background:${C.fill};border:1px solid ${C.border};border-radius:3px"></div></div>
+          </div>
+          <div><div style="font-size:8px;color:${C.text2};margin-bottom:3px;font-family:Arial">Email Address</div><div style="height:28px;background:${C.fill};border:1px solid ${C.border};border-radius:3px"></div></div>
+          <div><div style="font-size:8px;color:${C.text2};margin-bottom:3px;font-family:Arial">Message</div><div style="height:68px;background:${C.fill};border:1px solid ${C.border};border-radius:3px"></div></div>
+          <div style="margin-top:4px">${btn('Send Message',true)}</div>
+        </div>
+      </div>`;
+
+    case 'map': return `
+      <div style="position:relative;height:${h}px;background:${C.fill2};overflow:hidden">
+        <div style="${s.lbl}">Map</div>
+        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="${C.text3}" stroke-width="1.5"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          <div style="font-size:9px;color:${C.text2};font-family:Arial">123 Store Street, City, State</div>
+        </div>
+      </div>`;
+
+    case 'events': return `
+      <div style="position:relative;height:${h}px;background:${C.surface};padding:20px 16px;overflow:hidden">
+        <div style="${s.lbl}">Events</div>
+        <div style="${s.sub};margin-bottom:14px">Upcoming Events</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          ${[['Jan 14','Workshop: Getting Started','10:00am – 12:00pm · Location Name'],
+             ['Jan 21','Product Launch Event','6:00pm – 9:00pm · Location Name'],
+             ['Feb 02','Community Meetup','2:00pm – 4:00pm · Location Name']].map(([d,t,sc])=>`
+          <div style="display:flex;gap:10px;align-items:center;padding:8px;background:${C.fill};border:1px solid ${C.border};border-radius:4px">
+            <div style="width:36px;height:36px;background:${C.accent};border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">
+              <span style="font-size:7px;color:rgba(255,255,255,.7);text-transform:uppercase">${d.split(' ')[0]}</span>
+              <span style="font-size:13px;font-weight:700;color:#fff;line-height:1;font-family:Arial">${d.split(' ')[1]}</span>
+            </div>
+            <div>
+              <div style="${s.sub};font-size:9px">${t}</div>
+              <div style="font-size:8px;color:${C.text3};font-family:Arial">${sc}</div>
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+
+    case 'custom_html': return `
+      <div style="position:relative;height:${h}px;background:${C.fill};border:1px dashed ${C.border2};display:flex;align-items:center;justify-content:center;gap:10px;overflow:hidden">
+        <div style="${s.lbl}">Custom HTML</div>
+        <code style="font-size:11px;color:${C.text3}">&lt;/&gt;</code>
+        <span style="font-size:9px;color:${C.text3};font-family:Arial">Custom HTML Section</span>
+      </div>`;
+
+    case 'custom_liquid': return `
+      <div style="position:relative;height:${h}px;background:${C.fill};border:1px dashed ${C.border2};display:flex;align-items:center;justify-content:center;gap:10px;overflow:hidden">
+        <div style="${s.lbl}">Custom Liquid</div>
+        <code style="font-size:11px;color:${C.text3}">{%  %}</code>
+        <span style="font-size:9px;color:${C.text3};font-family:Arial">Custom Liquid Section</span>
+      </div>`;
+
+    case 'announcement': return `
+      <div style="position:relative;height:${h}px;background:${C.dark};display:flex;align-items:center;justify-content:center;gap:16px;overflow:hidden">
+        <div style="${s.lblInv}">Announcement Bar</div>
+        <span style="font-size:9px;color:rgba(255,255,255,.4)">✦</span>
+        <span style="font-size:9px;color:rgba(255,255,255,.6);font-family:Arial">Free shipping on orders over $75</span>
+        <span style="font-size:9px;color:rgba(255,255,255,.4)">✦</span>
+        <span style="font-size:9px;color:rgba(255,255,255,.6);font-family:Arial">Use code WELCOME10 for 10% off</span>
+        <span style="font-size:9px;color:rgba(255,255,255,.4)">✦</span>
+      </div>`;
+
+    case 'spacer': return `
+      <div style="position:relative;height:${h}px;background:transparent;border:1px dashed ${C.border2};display:flex;align-items:center;justify-content:center;overflow:hidden">
+        <div style="${s.lbl}">Spacer</div>
+        <span style="font-size:9px;color:${C.text3};font-family:Arial">↕ Spacer</span>
+      </div>`;
+
+    default: return `<div style="height:${h}px;background:${C.fill};display:flex;align-items:center;justify-content:center"><span style="font-size:10px;color:${C.text3}">${id}</span></div>`;
+  }
+}
+
+let placed=[], counter=0;
+
+function buildPalette(){
+  const cats=[...new Set(blocks.map(b=>b.cat))];
+  const pal=document.getElementById('palette');
+  pal.innerHTML='';
+  cats.forEach(cat=>{
+    const l=document.createElement('div');l.className='cat-label';l.textContent=cat;pal.appendChild(l);
+    blocks.filter(b=>b.cat===cat).forEach(b=>{
+      const c=document.createElement('div');c.className='block-chip';
+      c.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="3" rx="1"/><rect x="3" y="11" width="18" height="3" rx="1"/><rect x="3" y="17" width="18" height="3" rx="1"/></svg><span>${b.name}</span>`;
+      c.onclick=()=>addBlock(b);
+      pal.appendChild(c);
+    });
+  });
+}
+
+function addBlock(b){placed.push({...b,uid:++counter});render();}
+function removeBlock(uid){placed=placed.filter(b=>b.uid!==uid);render();}
+function moveBlock(uid,dir){
+  const i=placed.findIndex(b=>b.uid===uid);
+  if(dir===-1&&i===0||dir===1&&i===placed.length-1)return;
+  const a=[...placed];[a[i],a[i+dir]]=[a[i+dir],a[i]];placed=a;render();
+}
+function clearCanvas(){placed=[];render();}
+function loadTemplate(key){
+  if(!key)return;
+  placed=[];counter=0;
+  (templates[key]||[]).forEach(id=>{const b=blocks.find(x=>x.id===id);if(b)placed.push({...b,uid:++counter});});
+  render();document.getElementById('tpl-select').value='';
+}
+function exportList(){
+  if(!placed.length){alert('Canvas is empty.');return;}
+  const list=placed.map((b,i)=>`${i+1}. ${b.name} (${b.id})`).join('\n');
+  const msg=`Here is my current wireframe block order:\n\n${list}\n\nCan you generate the wireframe HTML for this layout?`;
+  const ta=document.createElement('textarea');
+  ta.value=msg;document.body.appendChild(ta);ta.select();
+  document.execCommand('copy');document.body.removeChild(ta);
+  alert('Block list copied to clipboard. Paste into Claude.');
+}
+
+function render(){
+  const c=document.getElementById('canvas');
+  document.getElementById('block-count').textContent=placed.length+' block'+(placed.length===1?'':'s');
+  if(!placed.length){c.innerHTML=`<div id="empty"><p>Click blocks to add them</p><small>or load a template above</small></div>`;return;}
+  c.innerHTML='';
+  placed.forEach(b=>{
+    const el=document.createElement('div');el.className='cb';
+    el.innerHTML=`<div class="cb-header"><span class="cb-name">${b.name}</span><span class="cb-cat">${b.cat}</span><div class="cb-actions"><button onclick="moveBlock(${b.uid},-1)" title="Up">↑</button><button onclick="moveBlock(${b.uid},1)" title="Down">↓</button><button class="del" onclick="removeBlock(${b.uid})" title="Remove">✕</button></div></div><div class="cb-preview">${pv(b.id)}</div>`;
+    c.appendChild(el);
+  });
+}
+
+document.getElementById('tpl-select').onchange=function(){loadTemplate(this.value);};
+buildPalette();render();
+</script>
+</body>
+</html>
