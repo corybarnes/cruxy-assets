@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Framed Hair — Landing Page Wireframe (Mid-Fi)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: #e8e8e8; }
+body {
+  font-family: Arial, sans-serif;
+  width: 1440px;
+  margin: 0 auto;
+  background: #f4f5f7;
+  color: #1e2530;
+  box-shadow: 0 0 40px rgba(0,0,0,0.12);
+}
+h1, h2, h3 { font-family: Georgia, serif; font-weight: bold; }
+p, li { line-height: 1.55; }
+
+section { position: relative; }
+.badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #1e2530;
+  color: #f4f5f7;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  z-index: 10;
+}
+
+.btn {
+  display: inline-block;
+  padding: 16px 36px;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+}
+.btn-primary { background: #5b7fa6; color: #ffffff; }
+.btn-outline { background: transparent; color: #ffffff; border: 2px solid #ffffff; }
+
+.img-ph {
+  background: #dde1e7;
+  border: 1px solid #c8cdd6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.img-ph span {
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8a92a0;
+}
+
+/* ── Block 1: Slideshow ─────────────────────────── */
+.slideshow {
+  height: 680px;
+  background: #dde1e7;
+}
+.slideshow .overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(30,37,48,0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 180px;
+}
+.slideshow .img-label {
+  position: absolute;
+  top: 16px; right: 16px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.7);
+}
+.slideshow h1 {
+  color: #ffffff;
+  font-size: 52px;
+  line-height: 1.15;
+  margin-bottom: 28px;
+}
+.slideshow p {
+  color: #ffffff;
+  font-size: 19px;
+  max-width: 760px;
+  margin-bottom: 40px;
+}
+.slideshow .ctas { display: flex; }
+.slideshow .ctas .btn + .btn { margin-left: 20px; }
+
+/* ── Block 2: Before/After ─────────────────────── */
+.before-after {
+  background: #f4f5f7;
+  padding: 90px 100px;
+}
+.before-after h2 { font-size: 38px; text-align: center; margin-bottom: 50px; }
+.ba-row { display: flex; }
+.ba-item + .ba-item { margin-left: 32px; }
+.ba-item { flex: 1; }
+.ba-item .img-ph { height: 440px; }
+.ba-item .label {
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-top: 14px;
+  color: #8a92a0;
+}
+
+/* ── Block 3: Testimonials ─────────────────────── */
+.testimonials {
+  background: #1e2530;
+  padding: 90px 100px;
+}
+.testimonials h2 { color: #ffffff; font-size: 38px; text-align: center; margin-bottom: 50px; }
+.t-row { display: flex; }
+.t-card + .t-card { margin-left: 32px; }
+.t-card {
+  flex: 1;
+  background: #2a3342;
+  border: 1px solid #3d4757;
+  padding: 36px 32px;
+}
+.t-card .stars { color: #5b7fa6; font-size: 18px; letter-spacing: 0.2em; margin-bottom: 18px; }
+.t-card p { color: #ffffff; font-size: 15px; margin-bottom: 22px; }
+.t-card .name {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8a92a0;
+}
+
+/* ── Blocks 4 & 5: Image + Text ────────────────── */
+.img-text { display: flex; min-height: 560px; }
+.img-text .half { flex: 1; }
+.img-text .img-ph { height: 100%; min-height: 560px; }
+.img-text .content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 90px;
+}
+.img-text.alt { background: #eceef1; }
+.img-text.base { background: #f4f5f7; }
+.img-text h2 { font-size: 36px; margin-bottom: 30px; }
+.img-text ul { list-style: none; margin-bottom: 30px; }
+.img-text li {
+  font-size: 17px;
+  padding: 8px 0;
+  border-bottom: 1px solid #dde1e7;
+}
+.img-text li:last-child { border-bottom: none; }
+.img-text .check-line {
+  font-size: 17px;
+  font-weight: bold;
+  padding: 16px 20px;
+  background: #ffffff;
+  border-left: 4px solid #5b7fa6;
+}
+.img-text .closer { font-size: 18px; font-weight: bold; line-height: 1.5; }
+
+/* ── Block 6: Multicolumn Images ───────────────── */
+.methods {
+  background: #f4f5f7;
+  padding: 90px 100px;
+}
+.methods h2 { font-size: 38px; text-align: center; margin-bottom: 56px; }
+.m-row { display: flex; }
+.m-col + .m-col { margin-left: 32px; }
+.m-col { flex: 1; position: relative; }
+.m-col .img-ph { height: 360px; }
+.m-col h3 { font-size: 21px; margin: 24px 0 12px; }
+.m-col p { font-size: 15px; color: #4a5260; }
+.m-col .popular {
+  position: absolute;
+  top: 16px; left: 16px;
+  background: #5b7fa6;
+  color: #ffffff;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+}
+
+/* ── Block 7: Rich Text ────────────────────────── */
+.investment {
+  background: #1e2530;
+  padding: 100px 280px;
+  text-align: center;
+}
+.investment h2 { color: #ffffff; font-size: 42px; margin-bottom: 30px; }
+.investment p { color: #ffffff; font-size: 18px; margin-bottom: 36px; }
+.investment .checks { margin-bottom: 44px; }
+.investment .checks div {
+  color: #9fb4cc;
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+/* ── Block 8: Contact Form ─────────────────────── */
+.contact {
+  background: #eceef1;
+  padding: 90px 360px;
+}
+.contact h2 { font-size: 36px; text-align: center; margin-bottom: 44px; }
+.contact form { display: flex; flex-direction: column; }
+.contact form > * { margin-bottom: 18px; }
+.contact .row2 { display: flex; }
+.contact .row2 input + input { margin-left: 18px; }
+.contact .row2 input { flex: 1; }
+.contact input, .contact textarea {
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  padding: 16px 18px;
+  border: 1px solid #dde1e7;
+  background: #ffffff;
+  color: #1e2530;
+  width: 100%;
+}
+.contact textarea { height: 140px; resize: none; }
+.contact .btn { align-self: center; margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<!-- Block 1: Slideshow -->
+<section class="slideshow">
+  <div class="badge">01 · SLIDESHOW</div>
+  <div class="img-label">HERO IMAGE</div>
+  <div class="overlay">
+    <h1>Wake Up Confident, Powerful and Beautiful. Every Day.</h1>
+    <p>At Framed, we don't just install hair extensions — we elevate your entire look with seamless, damage-free methods designed for real life and long-term hair health.</p>
+    <div class="ctas">
+      <a class="btn btn-primary" href="#contact">Book Your Consultation</a>
+      <a class="btn btn-outline" href="#">Call Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- Block 2: Before/After -->
+<section class="before-after">
+  <div class="badge">02 · BEFORE/AFTER</div>
+  <h2>Real Transformations. Real Confidence.</h2>
+  <div class="ba-row">
+    <div class="ba-item">
+      <div class="img-ph"><span>Before Image</span></div>
+      <div class="label">Before</div>
+    </div>
+    <div class="ba-item">
+      <div class="img-ph"><span>After Image</span></div>
+      <div class="label">After</div>
+    </div>
+  </div>
+</section>
+
+<!-- Block 3: Testimonials Multiple -->
+<section class="testimonials">
+  <div class="badge">03 · TESTIMONIALS</div>
+  <h2>Google Reviews</h2>
+  <div class="t-row">
+    <div class="t-card">
+      <div class="stars">★★★★★</div>
+      <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</p>
+      <div class="name">Reviewer Name</div>
+    </div>
+    <div class="t-card">
+      <div class="stars">★★★★★</div>
+      <p>"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat duis aute."</p>
+      <div class="name">Reviewer Name</div>
+    </div>
+    <div class="t-card">
+      <div class="stars">★★★★★</div>
+      <p>"Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint."</p>
+      <div class="name">Reviewer Name</div>
+    </div>
+  </div>
+</section>
+
+<!-- Block 4: Image + Right Text (text right, image left) -->
+<section class="img-text alt">
+  <div class="badge">04 · IMAGE + RIGHT TEXT</div>
+  <div class="half">
+    <div class="img-ph"><span>Image</span></div>
+  </div>
+  <div class="half content">
+    <h2>Why Framed?</h2>
+    <ul>
+      <li>– Premium 100% human hair</li>
+      <li>– Invisible, comfortable installation</li>
+      <li>– Tailored to your face + lifestyle</li>
+      <li>– Long-lasting, damage free</li>
+    </ul>
+    <div class="check-line">✔ Results that look like your hair ... but Enhanced</div>
+  </div>
+</section>
+
+<!-- Block 5: Image + Left Text (text left, image right) -->
+<section class="img-text base">
+  <div class="badge">05 · IMAGE + LEFT TEXT</div>
+  <div class="half content">
+    <h2>Framed Is for Women Who:</h2>
+    <ul>
+      <li>– Want to feel put together effortlessly</li>
+      <li>– Value quality over shortcuts</li>
+      <li>– Are ready to invest in themselves</li>
+      <li>– Understand maintenance = luxury</li>
+    </ul>
+    <p class="closer">If you want "cheap," this isn't it.<br>If you want perfect, you're in the right place.</p>
+  </div>
+  <div class="half">
+    <div class="img-ph"><span>Image</span></div>
+  </div>
+</section>
+
+<!-- Block 6: Multicolumn Images -->
+<section class="methods">
+  <div class="badge">06 · MULTICOLUMN IMAGES</div>
+  <h2>Our Signature Methods</h2>
+  <div class="m-row">
+    <div class="m-col">
+      <div class="img-ph"><span>Image</span></div>
+      <div class="popular">Most Popular</div>
+      <h3>Genius Weft Method</h3>
+      <p>Ultra-flat, flexible, undetectable. Ideal for volume + length.</p>
+    </div>
+    <div class="m-col">
+      <div class="img-ph"><span>Image</span></div>
+      <h3>K-Tips</h3>
+      <p>Long-lasting, discreet, perfect for customized placement.</p>
+    </div>
+    <div class="m-col">
+      <div class="img-ph"><span>Image</span></div>
+      <h3>Cocktail Mix</h3>
+      <p>K-tips for hard-to-reach areas, paired with wefts for maximum volume.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Block 7: Rich Text -->
+<section class="investment">
+  <div class="badge">07 · RICH TEXT</div>
+  <h2>Investment</h2>
+  <p>Packages start at $745 all-inclusive for a starter set, including hair, installation, custom cut, and styling. K-tip services start at $290.</p>
+  <div class="checks">
+    <div>✔ 50% deposit required to secure your booking</div>
+    <div>✔ Hair is custom-ordered for you</div>
+  </div>
+  <a class="btn btn-primary" href="#contact">Book Your Appointment</a>
+</section>
+
+<!-- Block 8: Contact Form -->
+<section class="contact" id="contact">
+  <div class="badge">08 · CONTACT FORM</div>
+  <h2>Book Your Consultation</h2>
+  <form>
+    <div class="row2">
+      <input type="text" placeholder="Name">
+      <input type="email" placeholder="Email">
+    </div>
+    <input type="tel" placeholder="Phone">
+    <textarea placeholder="Tell us about your hair goals"></textarea>
+    <button class="btn btn-primary" type="submit">Submit</button>
+  </form>
+</section>
+
+</body>
+</html>
